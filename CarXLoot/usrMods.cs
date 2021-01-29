@@ -78,136 +78,135 @@ namespace usrMods
 
             public void OnGUI()
             {
-                if (uiToggle.showUi)
-                {
-                GUI.skin = skin.WindowSkin; 
-                GUI.Box(new Rect(50, 20, 756, 420), ""); // rect is x, y, w, h
+            //if (uiToggle.showUi)
+            //{
+            //GUI.skin = skin.WindowSkin; 
+            //GUI.Box(new Rect(50, 20, 756, 420), ""); // rect is x, y, w, h
 
-                if (!carClicked)
+            //if (!carClicked) // a
+            //{
+            //    GUI.skin = skin.CarOffSkin;
+            //    bool cbclicked = GUI.Button(new Rect(66, 25, 247, 41), "");
+            //    if (cbclicked)
+            //    {
+            //        carClicked = !carClicked;
+            //    }
+            //}
+            GUI.skin = this.skin.CarOnSkin;
+            GUI.Button(new Rect(66, 25, 247, 41), "");
+
+            GUI.skin = this.skin.GameOffSkin;
+            GUI.Button(new Rect(315, 25, 247, 41), "");
+            GUI.skin = this.skin.GameOnSkin;
+            GUI.Button(new Rect(315, 25, 247, 41), "");
+
+            GUI.skin = this.skin.SettingsOffSkin;
+            GUI.Button(new Rect(564, 25, 247, 41), "");
+            GUI.skin = this.skin.SettingsOnSkin;
+            GUI.Button(new Rect(564, 25, 247, 41), "");
+
+            lerpButt1.normal.background = MakeTex(30, 30, smokeLerp1);
+            lerpButt2.normal.background = MakeTex(30, 30, smokeLerp2);
+            UIHelper.Begin("/usr/'s CarX Stuff", 5 + xOffset, 5 + yOffset, 300, 600, 15, 20, 2/*, GUIStyle.none*/);
+            UIHelper.Label("");
+
+            if (UIHelper.Button("RB Smoke ", rbSmokeBool/*, GUIStyle.none*/))
+            {
+                if (!colorTrans)
                 {
-                    GUI.skin = skin.CarOffSkin;
-                    bool cbclicked = GUI.Button(new Rect(66, 25, 247, 41), "");
-                    if (cbclicked)
-                    {
-                        carClicked = !carClicked;
-                    }
+                    rbSmokeBool = !rbSmokeBool;
                 }
 
-                //GUI.skin = this.skin.CarOnSkin;
-                //GUI.Button(new Rect(66, 25, 247, 41), "");
+            }
+            UIHelper.Label("RB Speed: " + rbSpeed.ToString("0.0"));
+            rbSpeed = UIHelper.Slider(rbSpeed, 0.5f, 5);
 
-                //GUI.skin = this.skin.GameOffSkin;
-                //GUI.Button(new Rect(315, 25, 247, 41), "");
-                //GUI.skin = this.skin.GameOnSkin;
-                //GUI.Button(new Rect(315, 25, 247, 41), "");
-
-                //GUI.skin = this.skin.SettingsOffSkin;
-                //GUI.Button(new Rect(564, 25, 247, 41), "");
-                //GUI.skin = this.skin.SettingsOnSkin;
-                //GUI.Button(new Rect(564, 25, 247, 41), "");
-
-                //lerpButt1.normal.background = MakeTex(30, 30, smokeLerp1);
-                //lerpButt2.normal.background = MakeTex(30, 30, smokeLerp2);
-                //UIHelper.Begin("/usr/'s CarX Stuff", 5 + xOffset, 5 + yOffset, 300, 600, 15, 20, 2/*, GUIStyle.none*/);
-                //UIHelper.Label("");
-
-                //if (UIHelper.Button("RB Smoke ", rbSmokeBool/*, GUIStyle.none*/))
-                //{
-                //    if (!colorTrans)
-                //    {
-                //        rbSmokeBool = !rbSmokeBool;
-                //    }
-
-                //}
-                //UIHelper.Label("RB Speed: " + rbSpeed.ToString("0.0"));
-                //rbSpeed = UIHelper.Slider(rbSpeed, 0.5f, 5);
-
-                //UIHelper.Label("Smoke Color Transistion");
-                //if (UIHelper.Button("Smoke LERP ", colorTrans/*, GUIStyle.none*/))
-                //{
-                //    if (!rbSmokeBool)
-                //    {
-                //        colorTrans = !colorTrans;
-                //    }
-                //}
-                //if (GUI.Button(new Rect(246 + xOffset, 153 + yOffset, 20, 20), "", lerpButt1))
-                //{
-                //    if (lerpColorWindow2)
-                //    {
-                //        lerpColorWindow2 = !lerpColorWindow2;
-                //    }
-                //    lerpColorWindow1 = !lerpColorWindow1;
-                //}
-                //if (GUI.Button(new Rect(271 + xOffset, 153 + yOffset, 20, 20), "", lerpButt2))
-                //{
-                //    if (lerpColorWindow1)
-                //    {
-                //        lerpColorWindow1 = !lerpColorWindow1;
-                //    }
-                //    lerpColorWindow2 = !lerpColorWindow2;
-                //}
-                //if (lerpColorWindow1)
-                //{
-                //    UIHelper.Begin2("Lerp Color 1", 308 + xOffset, 5 + yOffset, 250, 250, 15, 20, 2);
-                //    UIHelper.Label2("");
-                //    UIHelper.Label2("Red");
-                //    lRed1 = UIHelper.Slider2(lRed1, 0, 1);
-                //    UIHelper.Label2("Green");
-                //    lGreen1 = UIHelper.Slider2(lGreen1, 0, 1);
-                //    UIHelper.Label2("Blue");
-                //    lBlue1 = UIHelper.Slider2(lBlue1, 0, 1);
-                //    smokeLerp1 = new Color(lRed1, lGreen1, lBlue1);
-                //    if (UIHelper.Button2("Close"))
-                //    {
-                //        lerpColorWindow1 = !lerpColorWindow1;
-                //    }
-                //}
-
-                //if (lerpColorWindow2)
-                //{
-                //    UIHelper.Begin2("Lerp Color 2", 308 + xOffset, 5 + yOffset, 250, 250, 15, 20, 2);
-                //    UIHelper.Label2("");
-                //    UIHelper.Label2("Red");
-                //    lRed2 = UIHelper.Slider2(lRed2, 0, 1);
-                //    UIHelper.Label2("Green");
-                //    lGreen2 = UIHelper.Slider2(lGreen2, 0, 1);
-                //    UIHelper.Label2("Blue");
-                //    lBlue2 = UIHelper.Slider2(lBlue2, 0, 1);
-                //    smokeLerp2 = new Color(lRed2, lGreen2, lBlue2);
-                //    if (UIHelper.Button2("Close"))
-                //    {
-                //        lerpColorWindow2 = !lerpColorWindow2;
-                //    }
-                //}
-
-                //UIHelper.Label("Lerp Speed: " + lerpSpeed.ToString("0.0"));
-                //lerpSpeed = UIHelper.Slider(lerpSpeed, 0.5f, 5);
-
-                //UIHelper.Label("--------------");
-
-                //UIHelper.Label("Money/Level/Unlocks");
-                //if (UIHelper.Button("Set All (XP,Money & Unlocks)"))
-                //    GameConsole.GiveAll();
-                //if (UIHelper.Button("Set Money to 99999999"))
-                //    GameConsole.GiveMoney();
-                //if (UIHelper.Button("Add Level"))
-                //    GameConsole.GiveLevel();
-
-                //UIHelper.Label("--------------");
-
-                //UIHelper.Label("Menu Location");
-                //UIHelper.Label("X Offset");
-                //xOffset = UIHelper.Slider(xOffset, 0, 1615);
-                //UIHelper.Label("Y Offset");
-                //yOffset = UIHelper.Slider(yOffset, 0, 475);
+            UIHelper.Label("Smoke Color Transistion");
+            if (UIHelper.Button("Smoke LERP ", colorTrans/*, GUIStyle.none*/))
+            {
+                if (!rbSmokeBool)
+                {
+                    colorTrans = !colorTrans;
+                }
+            }
+            if (GUI.Button(new Rect(246 + xOffset, 153 + yOffset, 20, 20), "", lerpButt1))
+            {
+                if (lerpColorWindow2)
+                {
+                    lerpColorWindow2 = !lerpColorWindow2;
+                }
+                lerpColorWindow1 = !lerpColorWindow1;
+            }
+            if (GUI.Button(new Rect(271 + xOffset, 153 + yOffset, 20, 20), "", lerpButt2))
+            {
+                if (lerpColorWindow1)
+                {
+                    lerpColorWindow1 = !lerpColorWindow1;
+                }
+                lerpColorWindow2 = !lerpColorWindow2;
+            }
+            if (lerpColorWindow1)
+            {
+                UIHelper.Begin2("Lerp Color 1", 308 + xOffset, 5 + yOffset, 250, 250, 15, 20, 2);
+                UIHelper.Label2("");
+                UIHelper.Label2("Red");
+                lRed1 = UIHelper.Slider2(lRed1, 0, 1);
+                UIHelper.Label2("Green");
+                lGreen1 = UIHelper.Slider2(lGreen1, 0, 1);
+                UIHelper.Label2("Blue");
+                lBlue1 = UIHelper.Slider2(lBlue1, 0, 1);
+                smokeLerp1 = new Color(lRed1, lGreen1, lBlue1);
+                if (UIHelper.Button2("Close"))
+                {
+                    lerpColorWindow1 = !lerpColorWindow1;
+                }
             }
 
-        }
+            if (lerpColorWindow2)
+            {
+                UIHelper.Begin2("Lerp Color 2", 308 + xOffset, 5 + yOffset, 250, 250, 15, 20, 2);
+                UIHelper.Label2("");
+                UIHelper.Label2("Red");
+                lRed2 = UIHelper.Slider2(lRed2, 0, 1);
+                UIHelper.Label2("Green");
+                lGreen2 = UIHelper.Slider2(lGreen2, 0, 1);
+                UIHelper.Label2("Blue");
+                lBlue2 = UIHelper.Slider2(lBlue2, 0, 1);
+                smokeLerp2 = new Color(lRed2, lGreen2, lBlue2);
+                if (UIHelper.Button2("Close"))
+                {
+                    lerpColorWindow2 = !lerpColorWindow2;
+                }
+            }
+
+            UIHelper.Label("Lerp Speed: " + lerpSpeed.ToString("0.0"));
+            lerpSpeed = UIHelper.Slider(lerpSpeed, 0.5f, 5);
+
+            UIHelper.Label("--------------");
+
+            UIHelper.Label("Money/Level/Unlocks");
+            if (UIHelper.Button("Set All (XP,Money & Unlocks)"))
+                GameConsole.GiveAll();
+            if (UIHelper.Button("Set Money to 99999999"))
+                GameConsole.GiveMoney();
+            if (UIHelper.Button("Add Level"))
+                GameConsole.GiveLevel();
+
+            UIHelper.Label("--------------");
+
+            UIHelper.Label("Menu Location");
+            UIHelper.Label("X Offset");
+            xOffset = UIHelper.Slider(xOffset, 0, 1615);
+            UIHelper.Label("Y Offset");
+            yOffset = UIHelper.Slider(yOffset, 0, 475);
+            }
+
+    }
         public class uiToggle
         {
             public static bool showUi = false;
         }
-    }
+}
 
     public static class UIHelper
     {
@@ -234,7 +233,7 @@ namespace usrMods
             margin = _margin;
             controlHeight = _controlHeight;
             controlDist = _controlDist;
-            nextControlY = 20f + usrMods.yOffset;
+            nextControlY = 20f + usrMods.usrMods.yOffset;
             GUI.Box(new Rect(x, y, width, height), text/*, style*/);
         }
 
@@ -284,7 +283,7 @@ namespace usrMods
             margin2 = _margin;
             controlHeight2 = _controlHeight;
             controlDist2 = _controlDist;
-            nextControlY2 = 20f + usrMods.yOffset;
+            nextControlY2 = 20f + usrMods.usrMods.yOffset;
             GUI.Box(new Rect(x2, y2, width2, height2), text);
         }
         private static Rect NextControlRect2()
@@ -310,4 +309,3 @@ namespace usrMods
             GUI.Label(NextControlRect2(), text);
         }
     }
-}
