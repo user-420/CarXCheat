@@ -198,6 +198,7 @@ namespace usrMods
                 //GUI.skin = this.skin.GameOnSkin;
                 //GUI.Button(new Rect(315, 25, 247, 41), "");
 
+                // ---SETTINGS TAB---
                 //GUI.skin = this.skin.SettingsOffSkin;
                 //GUI.Button(new Rect(564, 25, 247, 41), "");
                 //GUI.skin = this.skin.SettingsOnSkin;
