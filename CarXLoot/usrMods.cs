@@ -8,7 +8,7 @@ namespace usrMods
 {
     [BepInPlugin("carx.usrmods", "CarX", "0.0.2")]
     public class usrMods : BaseUnityPlugin
-    {  
+    {
         // loader for ui
         // private static UnityEngine.GameObject usrObject;
 
@@ -36,7 +36,32 @@ namespace usrMods
         public static Color smokeLerp2 = Color.black;
         public static GUIStyle lerpButt1 = new GUIStyle();
         public static GUIStyle lerpButt2 = new GUIStyle();
-        public GUIS skin = new GUIS();
+        private Font consolas;
+        public GUISkin TextBottomSkin;
+        public GUISkin TextSkin;
+        public GUISkin WindowSkin;
+        public GUISkin CheckBoxCheckSkin;
+        public GUISkin CheckBoxUncheckSkin;
+        public GUISkin CarOnSkin;
+        public GUISkin CarOffSkin;
+        public GUISkin SettingsOnSkin;
+        public GUISkin SettingsOffSkin;
+        public GUISkin GameOnSkin;
+        public GUISkin GameOffSkin;
+        public GUISkin ButtonSkin;
+        public GUISkin SliderSkin;
+        public GUISkin SliderThumbSkin;
+        private Texture2D MENU_BG = LoadTexture("menubg.png");
+        private Texture2D CHECK = LoadTexture("checkedbox.png");
+        private Texture2D UNCHECK = LoadTexture("button.png");
+        private Texture2D CAR_BUTTON_ON = LoadTexture("carbuttonon.png");
+        private Texture2D CAR_BUTTON_OFF = LoadTexture("carbuttonoff.png");
+        private Texture2D SETTINGS_BUTTON_ON = LoadTexture("settingsbuttonon.png");
+        private Texture2D SETTINGS_BUTTON_OFF = LoadTexture("settingsbuttonoff.png");
+        private Texture2D BUTTON = LoadTexture("button.png");
+        private Texture2D BUTTON_PRESSED = LoadTexture("buttonclicked.png");
+        private Texture2D SLIDER = LoadTexture("slider.png");
+        private Texture2D SLIDER_THUMB = LoadTexture("sliderthing.png");
 
         //funcs
         public static Texture2D MakeTex(int width, int height, Color col)
@@ -53,14 +78,28 @@ namespace usrMods
             return result;
         }
 
+        public static Texture2D LoadTexture(string name)
+        {
+            Texture2D texture2D = new Texture2D(4, 4);
+            FileStream fileStream = new FileStream(Paths.PluginPath + "/OzarkCarX/assets/" + name, FileMode.Open, FileAccess.Read);
+            byte[] array = new byte[fileStream.Length];
+            fileStream.Read(array, 0, (int)fileStream.Length);
+            ImageConversion.LoadImage(texture2D, array);
+            return texture2D;
+        }
+
+
         public void Start()
         {
             //usrObject = new UnityEngine.GameObject();
-            //usrObject.AddComponent<usrStuff>();
+            //usrObject.AddComponent<GUIS>();
             //UnityEngine.Object.DontDestroyOnLoad(usrObject);
+            //GameObject guisObject = GameObject.Find("usrObject");
+            //GUIS guiSkins = guisObject.GetComponent<GUIS>();
         }
         public void Update()
         {
+            // GameConsole.Print(skin.ToString());
             bool keyDown2 = Input.GetKeyDown(KeyCode.Delete);
             if (keyDown2)
                 uiToggle.showUi = !uiToggle.showUi;
@@ -69,23 +108,83 @@ namespace usrMods
                 smokeColor = HSBColor.ToColor(new HSBColor(Mathf.PingPong(Time.time * rbSpeed, 1f), 1f, 1f));
                 NetworkController.InstanceGame.LocalPlayer.userCar.SetSmokeColor(smokeColor, null);
             }
-            if(colorTrans)
+            if (colorTrans)
             {
                 smokeColor = Color.Lerp(smokeLerp1, smokeLerp2, Mathf.PingPong(Time.time, lerpSpeed));
                 NetworkController.InstanceGame.LocalPlayer.userCar.SetSmokeColor(smokeColor, null);
             }
         }
 
-            public void OnGUI()
+        public void OnGUI()
+        {
+            this.consolas = Font.CreateDynamicFontFromOSFont("Consolas", 12);
+            TextBottomSkin = ScriptableObject.CreateInstance<GUISkin>();
+            TextSkin = ScriptableObject.CreateInstance<GUISkin>();
+            WindowSkin = ScriptableObject.CreateInstance<GUISkin>();
+            CheckBoxCheckSkin = ScriptableObject.CreateInstance<GUISkin>();
+            CheckBoxUncheckSkin = ScriptableObject.CreateInstance<GUISkin>();
+            CarOnSkin = ScriptableObject.CreateInstance<GUISkin>();
+            CarOffSkin = ScriptableObject.CreateInstance<GUISkin>();
+            SettingsOnSkin = ScriptableObject.CreateInstance<GUISkin>();
+            SettingsOffSkin = ScriptableObject.CreateInstance<GUISkin>();
+            GameOnSkin = ScriptableObject.CreateInstance<GUISkin>();
+            GameOffSkin = ScriptableObject.CreateInstance<GUISkin>();
+            ButtonSkin = ScriptableObject.CreateInstance<GUISkin>();
+            SliderSkin = ScriptableObject.CreateInstance<GUISkin>();
+            SliderThumbSkin = ScriptableObject.CreateInstance<GUISkin>();
+            this.TextSkin.label.font = this.consolas;
+            this.TextSkin.label.fontSize = 13;
+            this.TextBottomSkin.label.font = this.consolas;
+            this.TextBottomSkin.label.fontSize = 10;
+            this.WindowSkin.box.normal.background = this.MENU_BG;
+            this.CheckBoxCheckSkin.button.normal.background = this.CHECK;
+            this.CheckBoxCheckSkin.button.stretchHeight = false;
+            this.CheckBoxCheckSkin.button.stretchWidth = false;
+            this.CheckBoxCheckSkin.button.fixedHeight = 20f;
+            this.CheckBoxCheckSkin.button.fixedWidth = 20f;
+            this.CheckBoxUncheckSkin.button.normal.background = this.UNCHECK;
+            this.CheckBoxUncheckSkin.button.stretchHeight = false;
+            this.CheckBoxUncheckSkin.button.stretchWidth = false;
+            this.CheckBoxUncheckSkin.button.fixedHeight = 20f;
+            this.CheckBoxUncheckSkin.button.fixedWidth = 20f;
+            this.CarOnSkin.button.normal.background = this.CAR_BUTTON_ON;
+            this.CarOffSkin.button.normal.background = this.CAR_BUTTON_OFF;
+            this.SettingsOnSkin.button.normal.background = this.SETTINGS_BUTTON_ON;
+            this.SettingsOffSkin.button.normal.background = this.SETTINGS_BUTTON_OFF;
+            this.GameOnSkin.button.normal.background = this.SETTINGS_BUTTON_ON;
+            this.GameOffSkin.button.normal.background = this.SETTINGS_BUTTON_OFF;
+            this.ButtonSkin.button.normal.background = this.BUTTON;
+            this.ButtonSkin.button.active.background = this.BUTTON_PRESSED;
+            this.ButtonSkin.button.font = this.consolas;
+            this.ButtonSkin.button.normal.textColor = Color.white;
+            this.SliderSkin.horizontalSlider.normal.background = this.SLIDER;
+            this.SliderSkin.horizontalSlider.stretchHeight = false;
+            this.SliderSkin.horizontalSlider.stretchWidth = false;
+            this.SliderSkin.horizontalSlider.fixedHeight = 20f;
+            this.SliderSkin.horizontalSliderThumb.normal.background = this.SLIDER_THUMB;
+            this.SliderSkin.horizontalSliderThumb.stretchHeight = false;
+            this.SliderSkin.horizontalSliderThumb.stretchWidth = false;
+            this.SliderSkin.horizontalSliderThumb.fixedHeight = 20f;
+            this.SliderSkin.horizontalSliderThumb.fixedWidth = 6f;
+            if (uiToggle.showUi)
             {
-                if (uiToggle.showUi)
-                {
-                GUI.skin = skin.WindowSkin; 
+                // ---CAR TAB---
+                GUI.skin = WindowSkin;
                 GUI.Box(new Rect(50, 20, 756, 420), ""); // rect is x, y, w, h
 
                 if (!carClicked)
                 {
-                    GUI.skin = skin.CarOffSkin;
+                    GUI.skin = CarOffSkin;
+                    bool cbclicked = GUI.Button(new Rect(66, 25, 247, 41), "");
+                    if (cbclicked)
+                    {
+                        carClicked = !carClicked;
+                    }
+                }
+                
+                if (carClicked)
+                {
+                    GUI.skin = CarOnSkin;
                     bool cbclicked = GUI.Button(new Rect(66, 25, 247, 41), "");
                     if (cbclicked)
                     {
@@ -93,9 +192,7 @@ namespace usrMods
                     }
                 }
 
-                //GUI.skin = this.skin.CarOnSkin;
-                //GUI.Button(new Rect(66, 25, 247, 41), "");
-
+                // ---GAME TAB---
                 //GUI.skin = this.skin.GameOffSkin;
                 //GUI.Button(new Rect(315, 25, 247, 41), "");
                 //GUI.skin = this.skin.GameOnSkin;
@@ -208,6 +305,28 @@ namespace usrMods
             public static bool showUi = false;
         }
     }
+
+ //   public class GUIS
+ //   {
+ //       public static Texture2D LoadTexture(string name)
+ //       {
+ //           Texture2D texture2D = new Texture2D(4, 4);
+ //           FileStream fileStream = new FileStream(Paths.PluginPath + "/OzarkCarX/assets/" + name, FileMode.Open, FileAccess.Read);
+ //           byte[] array = new byte[fileStream.Length];
+ //           fileStream.Read(array, 0, (int)fileStream.Length);
+ //           ImageConversion.LoadImage(texture2D, array);
+ //           return texture2D;
+ //       }
+
+ //       public GUIS()
+ //       {
+            
+ //           // this.ButtonSkin_.button.alignment = 4;
+ //       }
+
+        
+
+	//}
 
     public static class UIHelper
     {

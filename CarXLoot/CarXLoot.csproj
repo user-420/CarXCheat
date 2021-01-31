@@ -77,7 +77,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GUIS.cs" />
     <Compile Include="usrMods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

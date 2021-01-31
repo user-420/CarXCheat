@@ -10,7 +10,7 @@ namespace usrMods
         public static Texture2D LoadTexture(string name)
         {
             Texture2D texture2D = new Texture2D(4, 4);
-            FileStream fileStream = new FileStream(Paths.PluginPath + "/OzarkCarX/assets" + name, FileMode.Open, FileAccess.Read);
+            FileStream fileStream = new FileStream(Paths.PluginPath + "/OzarkCarX/assets/" + name, FileMode.Open, FileAccess.Read);
             byte[] array = new byte[fileStream.Length];
             fileStream.Read(array, 0, (int)fileStream.Length);
             ImageConversion.LoadImage(texture2D, array);
