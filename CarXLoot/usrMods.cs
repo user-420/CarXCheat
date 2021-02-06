@@ -15,13 +15,19 @@ namespace usrMods
         // vars
         public static bool rbSmokeBool = false;
         public static bool colorTrans = false;
+        public static bool lightRainbow = false;
+        public static bool lightGrad = false;
         public static bool lerpColorWindow1 = false;
         public static bool lerpColorWindow2 = false;
+        public static bool lightColorWindow1 = false;
+        public static bool lightColorWindow2 = false;
         public static bool carClicked = true;
         public static bool gameClicked = false;
         public static bool settingsClicked = false;
         public static float rbSpeed = 1.0F;
         public static float lerpSpeed = 1.0F;
+        public static float lightSpeed = 0.5F;
+        public static float lightSpeedG = 0.5F;
         public static float xOffset = 0F;
         public static float yOffset = 0F;
         public static float lRed1 = 1;
@@ -30,12 +36,22 @@ namespace usrMods
         public static float lRed2 = 0;
         public static float lGreen2 = 0;
         public static float lBlue2 = 0;
+        public static float lLRed1 = 1;
+        public static float lLGreen1 = 0;
+        public static float lLBlue1 = 0;
+        public static float lLRed2 = 0;
+        public static float lLGreen2 = 0;
+        public static float lLBlue2 = 1;
         public static string rbStr;
         public static Color smokeColor;
         public static Color smokeLerp1 = Color.white;
         public static Color smokeLerp2 = Color.black;
+        public static Color lightLerp1 = Color.red;
+        public static Color lightLerp2 = Color.blue;
         public static GUIStyle lerpButt1 = new GUIStyle();
         public static GUIStyle lerpButt2 = new GUIStyle();
+        public static GUIStyle lightButt1 = new GUIStyle();
+        public static GUIStyle lightButt2 = new GUIStyle();
         private Font consolas;
         public GUISkin TextBottomSkin;
         public GUISkin TextSkin;
@@ -70,6 +86,8 @@ namespace usrMods
         private const int SPACING = 15;
         private const int GAP = 10;
         private int element_y;
+        public RaceCar[] cars;
+        public RaceCar playersCar;
 
         //funcs
         public static Texture2D MakeTex(int width, int height, Color col)
@@ -102,10 +120,28 @@ namespace usrMods
             element_y = (int)r.yMax + SPACING;
             return GUI.Button(r, "");
         }
+        private void SearchForPlayersCar()
+        {
+            this.cars = UnityEngine.Object.FindObjectsOfType<RaceCar>();
+            for (int i = 0; i < this.cars.Length; i++)
+            {
+                bool flag = !this.cars[i].isNetworkCar;
+                if (flag)
+                {
+                    this.playersCar = this.cars[i];
+                    break;
+                }
+            }
+        }
 
 
         public void Start()
         {
+            bool pcIsNull = this.playersCar == null;
+            if (pcIsNull)
+            {
+                this.SearchForPlayersCar();
+            }
             this.consolas = Font.CreateDynamicFontFromOSFont("Consolas", 18);
             TextBottomSkin = ScriptableObject.CreateInstance<GUISkin>();
             TextSkin = ScriptableObject.CreateInstance<GUISkin>();
@@ -182,6 +218,38 @@ namespace usrMods
                 smokeColor = Color.Lerp(smokeLerp1, smokeLerp2, Mathf.PingPong(Time.time, lerpSpeed));
                 NetworkController.InstanceGame.LocalPlayer.userCar.SetSmokeColor(smokeColor, null);
             }
+            bool pcIsNull = this.playersCar == null;
+            if (pcIsNull)
+            {
+                this.SearchForPlayersCar();
+                GameConsole.Print("PlayerCar Was Null");
+            }
+            if (lightRainbow)
+            {
+                GameObject pc = playersCar.gameObject;
+                Light[] lights = pc.GetComponentsInChildren<UnityEngine.Light>();
+                for (int i = 0; i < lights.Length; i++)
+                {
+                    string gameObj = lights[i].gameObject.ToString();
+                    if (gameObj == "HeadLight(Clone) (UnityEngine.GameObject)")
+                    {
+                        lights[i].color = HSBColor.ToColor(new HSBColor(Mathf.PingPong(Time.time * lightSpeed, 1f), 1f, 1f));
+                    }
+                }
+            }
+            if (lightGrad)
+            {
+                GameObject pc = playersCar.gameObject;
+                Light[] lights = pc.GetComponentsInChildren<UnityEngine.Light>();
+                for (int i = 0; i < lights.Length; i++)
+                {
+                    string gameObj = lights[i].gameObject.ToString();
+                    if (gameObj == "HeadLight(Clone) (UnityEngine.GameObject)")
+                    {
+                        lights[i].color = Color.Lerp(lightLerp1, lightLerp2, Mathf.PingPong(Time.time, lerpSpeed));
+                    }
+                }
+            }
         }
 
         public void OnGUI()
@@ -227,6 +295,8 @@ namespace usrMods
 
                 lerpButt1.normal.background = MakeTex(30, 30, smokeLerp1);
                 lerpButt2.normal.background = MakeTex(30, 30, smokeLerp2);
+                lightButt1.normal.background = MakeTex(30, 30, lightLerp1);
+                lightButt2.normal.background = MakeTex(30, 30, lightLerp2);
 
                 if (carClicked)
                 {
@@ -244,7 +314,7 @@ namespace usrMods
                     GUI.skin = SliderSkin;
                     GUI.Label(new Rect(101, 88, 20, 100), "Rainbow Tire Smoke", localStyle);
                     rbSpeed = GUI.HorizontalSlider(new Rect(76, 110, 150, 15), rbSpeed, 0.5f, 10f);
-                    GUI.Label(new Rect(230, 113, 20, 100), "Rainbow Cycle Speed + [" + rbSpeed.ToString("0.0") + "]", localStyle);
+                    GUI.Label(new Rect(230, 113, 20, 100), "Smoke Rainbow Cycle Speed + [" + rbSpeed.ToString("0.0") + "]", localStyle);
                     //LERP
                     GUI.skin = colorTrans ? CheckBoxCheckSkin : CheckBoxUncheckSkin;
                     if (GUI.Button(new Rect(76, 140, 20, 20), ""))
@@ -255,7 +325,7 @@ namespace usrMods
                     GUI.skin = SliderSkin;
                     GUI.Label(new Rect(101, 143, 20, 100), "Gradient Smoke", localStyle);
                     lerpSpeed = GUI.HorizontalSlider(new Rect(76, 165, 150, 15), lerpSpeed, 0.5f, 10f);
-                    GUI.Label(new Rect(230, 168, 20, 100), "Gradient Speed [" + lerpSpeed.ToString("0.0") + "]", localStyle);
+                    GUI.Label(new Rect(230, 168, 20, 100), "Smoke Gradient Speed [" + lerpSpeed.ToString("0.0") + "]", localStyle);
                     if(GUI.Button(new Rect(226, 140, 20, 20), "", lerpButt1))
                     {
                         lerpColorWindow1 = !lerpColorWindow1;
@@ -302,83 +372,73 @@ namespace usrMods
                         if (GUI.Button(new Rect(504, 140, 20, 20), "x"))
                             lerpColorWindow2 = false;
                     }
-                    
+                    GUI.skin = lightRainbow ? CheckBoxCheckSkin : CheckBoxUncheckSkin;
+                    if (GUI.Button(new Rect(76, 196, 20, 20), ""))
+                    {
+                        lightRainbow = !lightRainbow;
+                        lightGrad = false;
+                    }
+                    GUI.Label(new Rect(101, 199, 20, 100), "Rainbow Lights", localStyle);
+                    GUI.skin = SliderSkin;
+                    lightSpeed = GUI.HorizontalSlider(new Rect(76, 221, 150, 15), lightSpeed, 0.1f, 1f);
+                    GUI.Label(new Rect(230, 224, 20, 100), "Light Rainbow Cycle Speed + [" + lightSpeed.ToString("0.0") + "]", localStyle);
+                    GUI.skin = lightGrad ? CheckBoxCheckSkin : CheckBoxUncheckSkin;
+                    if (GUI.Button(new Rect(76, 252, 20, 20), ""))
+                    {
+                        lightGrad = !lightGrad;
+                        lightRainbow = false;
+                    }
+                    GUI.Label(new Rect(101, 255, 20, 100), "Gradient Lights", localStyle);
+                    GUI.skin = SliderSkin;
+                    lightSpeedG = GUI.HorizontalSlider(new Rect(76, 277, 150, 15), lightSpeedG, 0.1f, 1f);
+                    GUI.Label(new Rect(230, 280, 20, 100), "Smoke Rainbow Cycle Speed + [" + lightSpeedG.ToString("0.0") + "]", localStyle);
+                    if (GUI.Button(new Rect(226, 255, 20, 20), "", lightButt1))
+                    {
+                        lightColorWindow1 = !lightColorWindow1;
+                        lightColorWindow2 = false;
+                    }
+                    if (lightColorWindow1)
+                    {
+                        GUI.skin = WindowSkin;
+                        Rect lightWindow1 = new Rect(274, 255, 250, 250);
+                        GUI.Box(lightWindow1, "Gradient Color 1");
+                        GUI.skin = SliderSkin;
+                        lLRed1 = GUI.HorizontalSlider(new Rect(334, 305, 120, 20), lLRed1, 0f, 1f);
+                        lLGreen1 = GUI.HorizontalSlider(new Rect(334, 371, 120, 20), lLGreen1, 0f, 1f);
+                        lLBlue1 = GUI.HorizontalSlider(new Rect(334, 437, 120, 20), lLBlue1, 0f, 1f);
+                        GUI.skin = TextCenterSkin;
+                        GUI.Label(new Rect(355, 329, 80, 12), "Red");
+                        GUI.Label(new Rect(355, 395, 80, 12), "Green");
+                        GUI.Label(new Rect(355, 461, 80, 12), "Blue");
+                        lightLerp1 = new Color(lLRed1, lLGreen1, lLBlue1);
+                        GUI.skin = ButtonSkin;
+                        if (GUI.Button(new Rect(504, 255, 20, 20), "x"))
+                            lightColorWindow1 = false;
+                    }
+                    if (GUI.Button(new Rect(249, 255, 20, 20), "", lightButt2))
+                    {
+                        lightColorWindow2 = !lightColorWindow2;
+                        lightColorWindow1 = false;
+                    }
+                    if (lightColorWindow2)
+                    {
+                        GUI.skin = WindowSkin;
+                        Rect lightWindow2 = new Rect(274, 255, 250, 250);
+                        GUI.Box(lightWindow2, "Gradient Color 2");
+                        GUI.skin = SliderSkin;
+                        lLRed2 = GUI.HorizontalSlider(new Rect(334, 305, 120, 20), lLRed2, 0f, 1f);
+                        lLGreen2 = GUI.HorizontalSlider(new Rect(334, 371, 120, 20), lLGreen2, 0f, 1f);
+                        lLBlue2 = GUI.HorizontalSlider(new Rect(334, 437, 120, 20), lLBlue2, 0f, 1f);
+                        GUI.skin = TextCenterSkin;
+                        GUI.Label(new Rect(355, 329, 80, 12), "Red");
+                        GUI.Label(new Rect(355, 395, 80, 12), "Green");
+                        GUI.Label(new Rect(355, 461, 80, 12), "Blue");
+                        lightLerp2 = new Color(lLRed2, lLGreen2, lLBlue2);
+                        GUI.skin = ButtonSkin;
+                        if (GUI.Button(new Rect(504, 255, 20, 20), "x"))
+                            lightColorWindow2 = false;
+                    }
                 }
-
-
-                //UIHelper.Begin("/usr/'s CarX Stuff", 5 + xOffset, 5 + yOffset, 300, 600, 15, 20, 2/*, GUIStyle.none*/);
-                //UIHelper.Label("");
-                //if (UIHelper.Button("RB Smoke ", rbSmokeBool))
-                //{
-                //    if (!colorTrans)
-                //    {
-                //        rbSmokeBool = !rbSmokeBool;
-                //    }
-
-                //}
-                //UIHelper.Label("RB Speed: " + rbSpeed.ToString("0.0"));
-                //rbSpeed = UIHelper.Slider(rbSpeed, 0.5f, 5);
-
-                //UIHelper.Label("Smoke Color Transistion");
-                //if (UIHelper.Button("Smoke LERP ", colorTrans/*, GUIStyle.none*/))
-                //{
-                //    if (!rbSmokeBool)
-                //    {
-                //        colorTrans = !colorTrans;
-                //    }
-                //}
-                //if (GUI.Button(new Rect(246 + xOffset, 153 + yOffset, 20, 20), "", lerpButt1))
-                //{
-                //    if (lerpColorWindow2)
-                //    {
-                //        lerpColorWindow2 = !lerpColorWindow2;
-                //    }
-                //    lerpColorWindow1 = !lerpColorWindow1;
-                //}
-                //if (GUI.Button(new Rect(271 + xOffset, 153 + yOffset, 20, 20), "", lerpButt2))
-                //{
-                //    if (lerpColorWindow1)
-                //    {
-                //        lerpColorWindow1 = !lerpColorWindow1;
-                //    }
-                //    lerpColorWindow2 = !lerpColorWindow2;
-                //}
-                //if (lerpColorWindow1)
-                //{
-                //    UIHelper.Begin2("Lerp Color 1", 308 + xOffset, 5 + yOffset, 250, 250, 15, 20, 2);
-                //    UIHelper.Label2("");
-                //    UIHelper.Label2("Red");
-                //    lRed1 = UIHelper.Slider2(lRed1, 0, 1);
-                //    UIHelper.Label2("Green");
-                //    lGreen1 = UIHelper.Slider2(lGreen1, 0, 1);
-                //    UIHelper.Label2("Blue");
-                //    lBlue1 = UIHelper.Slider2(lBlue1, 0, 1);
-                //    smokeLerp1 = new Color(lRed1, lGreen1, lBlue1);
-                //    if (UIHelper.Button2("Close"))
-                //    {
-                //        lerpColorWindow1 = !lerpColorWindow1;
-                //    }
-                //}
-
-                //if (lerpColorWindow2)
-                //{
-                //    UIHelper.Begin2("Lerp Color 2", 308 + xOffset, 5 + yOffset, 250, 250, 15, 20, 2);
-                //    UIHelper.Label2("");
-                //    UIHelper.Label2("Red");
-                //    lRed2 = UIHelper.Slider2(lRed2, 0, 1);
-                //    UIHelper.Label2("Green");
-                //    lGreen2 = UIHelper.Slider2(lGreen2, 0, 1);
-                //    UIHelper.Label2("Blue");
-                //    lBlue2 = UIHelper.Slider2(lBlue2, 0, 1);
-                //    smokeLerp2 = new Color(lRed2, lGreen2, lBlue2);
-                //    if (UIHelper.Button2("Close"))
-                //    {
-                //        lerpColorWindow2 = !lerpColorWindow2;
-                //    }
-                //}
-
-                //UIHelper.Label("Lerp Speed: " + lerpSpeed.ToString("0.0"));
-                //lerpSpeed = UIHelper.Slider(lerpSpeed, 0.5f, 5);
 
                 //UIHelper.Label("--------------");
 
@@ -389,14 +449,6 @@ namespace usrMods
                 //    GameConsole.GiveMoney();
                 //if (UIHelper.Button("Add Level"))
                 //    GameConsole.GiveLevel();
-
-                //UIHelper.Label("--------------");
-
-                //UIHelper.Label("Menu Location");
-                //UIHelper.Label("X Offset");
-                //xOffset = UIHelper.Slider(xOffset, 0, 1615);
-                //UIHelper.Label("Y Offset");
-                //yOffset = UIHelper.Slider(yOffset, 0, 475);
             }
             else {GameInput.InputManager.ResetLockInput(this);}
         }
@@ -405,28 +457,6 @@ namespace usrMods
             public static bool showUi = false;
         }
     }
-
- //   public class GUIS
- //   {
- //       public static Texture2D LoadTexture(string name)
- //       {
- //           Texture2D texture2D = new Texture2D(4, 4);
- //           FileStream fileStream = new FileStream(Paths.PluginPath + "/OzarkCarX/assets/" + name, FileMode.Open, FileAccess.Read);
- //           byte[] array = new byte[fileStream.Length];
- //           fileStream.Read(array, 0, (int)fileStream.Length);
- //           ImageConversion.LoadImage(texture2D, array);
- //           return texture2D;
- //       }
-
- //       public GUIS()
- //       {
-            
- //           // this.ButtonSkin_.button.alignment = 4;
- //       }
-
-        
-
-	//}
 
     public static class UIHelper
     {
